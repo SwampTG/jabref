@@ -109,4 +109,136 @@ class PdfContentImporterTest {
         assertEquals(Optional.of(entry), importer.getEntryFromPDFContent(firstPageContents, "\n"));
 
     }
+
+    @Test
+    void authorsNamesContainsComma() {
+        BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
+        entry.withField(StandardField.AUTHOR, "Link to record in KAR and http://kar.kent.ac.uk/51043/  and Document Version and UNSPECIFIED  and Master of Research (MRes) thesis and University of Kent")
+             .withField(StandardField.TITLE, "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
+             .withField(StandardField.YEAR, "5104");
+
+        String firstPageContents = "Kent Academic Repository Full text document (pdf)\n"
+                                   + "Citation for published version\n"
+                                   + "Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock\n"
+                                   + "Losses and Stakeholder Opinions.\n"
+                                   + "DOI\n\n\n"
+                                   + "Link to record in KAR\n"
+                                   + "http://kar.kent.ac.uk/51043/\n"
+                                   + "Document Version\n"
+                                   + "UNSPECIFIED\n"
+                                   + "Master of Research (MRes) thesis, University of Kent,.";
+
+        assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
+
+    }
+
+    @Test
+    void authorsNamesEndsWithEtAl() {
+        BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
+        entry.withField(StandardField.AUTHOR, "Link to record in KAR and http://kar.kent.ac.uk/51043/  and Document and Version and UNSPECIFIED  and Master of Research and (MRes) thesis and University and of Kent and others")
+             .withField(StandardField.TITLE, "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
+             .withField(StandardField.YEAR, "5104");
+
+        String firstPageContents = "Kent Academic Repository Full text document (pdf)\n"
+                                   + "Citation for published version\n"
+                                   + "Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock\n"
+                                   + "Losses and Stakeholder Opinions.\n"
+                                   + "DOI\n\n\n"
+                                   + "Link to record in KAR\n"
+                                   + "http://kar.kent.ac.uk/51043/\n"
+                                   + "Document, Version\n"
+                                   + "UNSPECIFIED\n"
+                                   + "Master of Research (MRes) thesis and University of Kent et al.";
+
+        assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
+
+    }
+    @Test
+    void authorsNamesContainsEmptyString() {
+        BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
+        entry.withField(StandardField.AUTHOR, "Link to record in KAR and http://kar.kent.ac.uk/51043/  and Document and Version and UNSPECIFIED  and  and Master of Research (MRes) thesisUniversity of Kent")
+             .withField(StandardField.TITLE, "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
+             .withField(StandardField.YEAR, "5104");
+
+        String firstPageContents = "Kent Academic Repository Full text document (pdf)\n"
+                                   + "Citation for published version\n"
+                                   + "Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock\n"
+                                   + "Losses and Stakeholder Opinions.\n"
+                                   + "DOI\n\n\n"
+                                   + "Link to record in KAR\n"
+                                   + "http://kar.kent.ac.uk/51043/\n"
+                                   + "Document,   ,Version\n"
+                                   + "UNSPECIFIED\n"
+                                   + "Master of Research (MRes) thesis and University of Kent,.";
+
+        assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
+
+    }
+
+    @Test
+    void authorsNamesDoesntContainComma() {
+        BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
+        entry.withField(StandardField.AUTHOR, "Ana Junior and http://kar.kent.ac.uk/51043/  and Document Version and .UNSPECIFIED  and Pedro et al. ")
+             .withField(StandardField.TITLE, "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
+             .withField(StandardField.YEAR, "5104");
+
+        String firstPageContents = "Kent Academic Repository Full text document (pdf)\n"
+                                   + "Citation for published version\n"
+                                   + "Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock\n"
+                                   + "Losses and Stakeholder Opinions.\n"
+                                   + "DOI\n\n\n"
+                                   + "Ana Junior\n"
+                                   + "http://kar.kent.ac.uk/51043/\n"
+                                   + "Document Version\n"
+                                   + ".UNSPECIFIED\n"
+                                   + "Pedro et al.";
+
+        assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
+
+    }
+
+    @Test
+    void authorsNamesContainsEtButNotAl() {
+        BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
+        entry.withField(StandardField.AUTHOR, "Ana Junior and http://kar.kent.ac.uk/51043/  and Document Version and .UNSPECIFIED  and Pedro et. ")
+             .withField(StandardField.TITLE, "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
+             .withField(StandardField.YEAR, "5104");
+
+        String firstPageContents = "Kent Academic Repository Full text document (pdf)\n"
+                                   + "Citation for published version\n"
+                                   + "Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock\n"
+                                   + "Losses and Stakeholder Opinions.\n"
+                                   + "DOI\n\n\n"
+                                   + "Ana Junior\n"
+                                   + "http://kar.kent.ac.uk/51043/\n"
+                                   + "Document Version\n"
+                                   + ".UNSPECIFIED\n"
+                                   + "Pedro et.";
+
+        assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
+
+    }
+
+    @Test
+    void authorsNamesContainsAlButNotEt() {
+        BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
+
+        entry.withField(StandardField.AUTHOR, "Ana Junior and http://kar.kent.ac.uk/51043/  and Document Version and .UNSPECIFIED  and Pedro al. ")
+             .withField(StandardField.TITLE, "Kent Academic Repository Full text document (pdf) Citation for published version Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock Losses and Stakeholder Opinions. DOI")
+             .withField(StandardField.YEAR, "5104");
+
+        String firstPageContents = "Kent Academic Repository Full text document (pdf)\n"
+                                   + "Citation for published version\n"
+                                   + "Smith, Lucy Anna (2014) Mortality in the Ornamental Fish Retail Sector: an Analysis of Stock\n"
+                                   + "Losses and Stakeholder Opinions.\n"
+                                   + "DOI\n\n\n"
+                                   + "Ana Junior\n"
+                                   + "http://kar.kent.ac.uk/51043/\n"
+                                   + "Document Version\n"
+                                   + ".UNSPECIFIED\n"
+                                   + "Pedro al.";
+
+        assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
+
+    }
 }
