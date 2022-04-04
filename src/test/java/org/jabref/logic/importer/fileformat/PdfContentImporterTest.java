@@ -109,7 +109,7 @@ class PdfContentImporterTest {
         assertEquals(Optional.of(entry), importer.getEntryFromPDFContent(firstPageContents, "\n"));
 
     }
-
+    // Caso de teste 1
     @Test
     void authorsNamesContainsComma() {
         BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
@@ -131,7 +131,7 @@ class PdfContentImporterTest {
         assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
 
     }
-
+// Caso de teste 2
     @Test
     void authorsNamesEndsWithEtAl() {
         BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
@@ -153,6 +153,7 @@ class PdfContentImporterTest {
         assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
 
     }
+// Caso de teste 3
     @Test
     void authorsNamesContainsEmptyString() {
         BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
@@ -174,7 +175,7 @@ class PdfContentImporterTest {
         assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
 
     }
-
+// Caso de teste 4
     @Test
     void authorsNamesDoesntContainComma() {
         BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
@@ -196,7 +197,7 @@ class PdfContentImporterTest {
         assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
 
     }
-
+// Caso de teste 5
     @Test
     void authorsNamesContainsEtButNotAl() {
         BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
@@ -218,7 +219,7 @@ class PdfContentImporterTest {
         assertEquals(entry.getFieldOrAlias(StandardField.AUTHOR), (importer.getEntryFromPDFContent(firstPageContents, "\n")).get().getFieldOrAlias(StandardField.AUTHOR));
 
     }
-
+// Caso de teste 6
     @Test
     void authorsNamesContainsAlButNotEt() {
         BibEntry entry = new BibEntry(StandardEntryType.InProceedings);
