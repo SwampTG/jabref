@@ -1,9 +1,15 @@
 package org.jabref.logic.importer.fetcher;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import kong.unirest.json.JSONObject;
 
 public class BiodiversityLibraryTest {
     private final String BASE_LIBRARY_URL = "https://www.biodiversitylibrary.org/api3?";
@@ -42,5 +48,15 @@ public class BiodiversityLibraryTest {
             System.out.println("Base URL error: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void urlDownloadAPIReturnAfter() {
+        
+        String  result = biodiversityFetcher.searchByAuthor("dimmock");
+        JSONObject searchResult = new JSONObject(result);
+
+        assertNotNull(result);
+        assertNotNull(searchResult.get("Result"));
     }
 }
