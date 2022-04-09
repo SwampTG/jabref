@@ -80,8 +80,10 @@ public class BiodiversityLibraryTest {
     public void testAdvancedSearchByAuthorWithTitleAndAuthor() {
         BibEntry searchParam = new BibEntry();
         searchParam.setField(StandardField.AUTHOR, "Gifford");
-        searchParam.setField(StandardField.TITLE, "");
+        searchParam.setField(StandardField.TITLE,
+                "Field notes on the land birds of the Galapagos Islands, and of Cocos Island,Costa Rica");
         List<BibEntry> searchResults = biodiversityFetcher.performAdvancedSearch(searchParam);
-        assertTrue(searchResults.contains(giffordFieldNotes));
+        assertEquals(searchResults.get(0).getField(StandardField.AUTHOR), 
+                searchParam.getField(StandardField.AUTHOR));
     }
 }

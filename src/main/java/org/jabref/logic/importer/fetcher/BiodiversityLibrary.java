@@ -9,7 +9,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
 import org.apache.http.client.utils.URIBuilder;
+import org.eclipse.jgit.lib.ObjectIdOwnerMap.Entry;
+import org.jabref.logic.cleanup.Formatter;
+import org.jabref.logic.formatter.Formatters;
 import org.jabref.logic.importer.ImporterPreferences;
 import org.jabref.logic.layout.format.EntryTypeFormatter;
 import org.jabref.logic.net.URLDownload;
@@ -19,6 +24,8 @@ import org.jabref.model.entry.types.EntryType;
 import org.jabref.model.entry.types.StandardEntryType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class BiodiversityLibrary {
@@ -98,12 +105,53 @@ public class BiodiversityLibrary {
     }
     
     public List<BibEntry> parseEntries(JSONObject jObject) {
+        List<BibEntry> parsingResults = new ArrayList<>();
         if (!jObject.isEmpty() && !jObject.isNull("Result")) {
-            JSONObject jObjectToParse = jObject.getJSONObject("Result");
-            BibEntry newBibEntry = new BibEntry();
-            newBibEntry.setType(jObject.get("Genre"));
+            JSONArray jsArray = jObject.getJSONArray("Result");
+            jsArray.forEach(
+                jObjectToParse -> {
+                    if(jObjectToParse instanceof JSONObject) {
+                        BibEntry newBibEntry = new BibEntry();
+                            newBibEntry.setType(
+                                    StandardEntryType.valueOf(((JSONObject) jObjectToParse).getString("Genre")));
+                            newBibEntry.setField(StandardField.TYPE,
+                                    ((JSONObject) jObjectToParse).getString("BHLType"));
+                            newBibEntry.setField(StandardField.TITLE, ((JSONObject) jObjectToParse).getString("Title"));
+                            newBibEntry.setField(StandardField.URL, ((JSONObject) jObjectToParse).getString("PartUrl"));
+
+                        String authorString = 
+                                generateAuthorString(((JSONObject) jObjectToParse)
+                                        .getJSONArray("Authors")).orElse("");
+                        if(!authorString.isEmpty()) {
+                            newBibEntry.setField(StandardField.AUTHOR, authorString);
+                        }
+
+                        parsingResults.add(newBibEntry);
+                    }
+                }
+            );
+            return parsingResults;
         }
         
         return Collections.emptyList();
+    }
+
+    public Optional<String> generateAuthorString(JSONArray authorsObject) {
+        String authorStringResult = "";
+        
+        if(!authorsObject.isEmpty()) {
+            for(int i = 0; i < authorsObject.length()-1; i++) {
+                authorStringResult.concat(JSONObject.class.cast(authorsObject.get(i)).getString("Name"));
+                if(i < authorsObject.length()-2)
+                    authorStringResult.concat(", ");
+            }
+            if(authorsObject.length()>1)
+                authorStringResult
+                        .concat("and ")
+                        .concat(JSONObject.class.cast(
+                            authorsObject.get(authorsObject.length()-1)).getString("Name"));
+            }
+
+        return Optional.empty();
     }
 }
